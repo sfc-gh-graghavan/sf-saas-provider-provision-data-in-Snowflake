@@ -171,7 +171,8 @@ create or replace procedure provision_data("customer_name" varchar, "account_nam
     //query for dynamic tables and grant select on them to share
     //PLEASE NOTE THAT THE VALUE OF "database_name" in the RESULT_SCAN
     //IS ALWAYS CAPITALIZED.  MAKE SURE TO CAPITALIZE AS NEEDED IF THE
-    //<CUSTOMER_NAME> IS PASSED IN LOWERCASE
+    //<CUSTOMER_NAME> IS PASSED IN LOWERCASE.  This code has a toUpperCase
+    //function to capitalize the parameter
     var show_dt_stmt = 'SHOW DYNAMIC TABLES';
     try {
         var show_dt_cmd = snowflake.createStatement({sqlText: show_dt_stmt});
@@ -179,7 +180,7 @@ create or replace procedure provision_data("customer_name" varchar, "account_nam
         //pick up the dynamic tables from RESULT_SCAN
         var pickup_dt_stmt = 'SELECT \"name\" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) ';
         pickup_dt_stmt += 'WHERE \"database_name\" = ';
-        pickup_dt_stmt += '\''+customer_name+'\'';
+        pickup_dt_stmt += '\''+customer_name.toUpperCase()+'\'';
         try {
             var pickup_dt_cmd = snowflake.createStatement({sqlText: pickup_dt_stmt});
             var pickup_dt_exec = pickup_dt_cmd.execute();
